@@ -72,8 +72,6 @@ class Table:
         row_generator = Table.csv(csv_filename)
         self.header = row_generator.next()
         self.cols = [Table.construct_column(item) for item in row_generator.next()]
-
-        # Add the rest of the rows
         for row in row_generator:
             self.rows.append(row)
             for item, col in zip(row, self.cols):
@@ -100,7 +98,7 @@ class Table:
     @staticmethod
     def parse_rows(file,prep = None, whitespace = '[\n\r\t]', comments = '#.*',
       sep = ","):
-      """
+      """ and print (a) the column name and (b) its statistics: and print (a) the column name and (b) its statistics:
       Walk down comma seperated values,
       skipping bad white space and blank lines
       """
@@ -131,5 +129,8 @@ class Table:
             yield row
 
 if __name__ == "__main__":
-    table = Table("weather.csv")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-csv_filename", type=str)
+    args = parser.parse_args()
+    table = Table(args.csv_filename)
     table.print_statistics()
