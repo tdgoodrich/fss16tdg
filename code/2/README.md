@@ -31,7 +31,6 @@ To call the ``zeror.py`` learner from the ``ninja.rc`` script I filled in the pr
 zeror() {
   python $Here/../../2/ZeroR.py -train $1 -test $2
 }
-
 ```
 
 Finally, made a new ``eg11`` by adding ``zeror`` to the learners from ``eg10``. The output after training looks like this:
@@ -57,7 +56,6 @@ rank ,         name ,    med   ,  iqr
    2 ,         jrip ,       9  ,    10 (  ---        * |------        ), 2.00,  4.00,  9.00, 11.00, 15.00
    2 ,       rbfnet ,       9  ,     5 (     -----   * |----          ), 4.00,  7.00,  9.00, 11.00, 14.00
    2 ,         bnet ,      11  ,     6 (        -----  |*   ------    ), 6.00,  9.00, 11.00, 14.00, 18.00
-
 ```
 
 Verifying this output, I saw that ``zeror`` predicts ``false`` for the dataset ``jedit-4.1.arff``, resulting in c = d = 0, which means that pd = pf = 0 as well.
