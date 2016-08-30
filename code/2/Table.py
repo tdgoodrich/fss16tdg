@@ -62,16 +62,22 @@ class Sym:
         return "mode: %s, entropy: %f" % (self.mode, self.entropy())
 
 class Table:
-    def __init__(self, csv_filename):
+    def __init__(self, filename):
         self.rows = []
         self.cols = []
         self.header = []
-        self.populate(csv_filename)
+        self.file_reader = None
+        if filename.split(".")[-1] == "csv":
+            self.file_reader = Table.csv
+        elif filename.split(".")[-1] == "arff":
+            self.file_reader = Table.arff
+        self.populate(filename)
 
-    def populate(self, csv_filename):
-        row_generator = Table.csv(csv_filename)
+    def populate(self, filename):
+        row_generator = self.file_reader(filename)
         self.header = row_generator.next()
-        self.cols = [Table.construct_column(item) for item in row_generator.next()]
+        self.rows.append(row_generator.next())
+        self.cols = [Table.construct_column(item) for item in self.rows[-1]]
         for row in row_generator:
             self.rows.append(row)
             for item, col in zip(row, self.cols):
@@ -98,7 +104,7 @@ class Table:
     @staticmethod
     def parse_rows(file,prep = None, whitespace = '[\n\r\t]', comments = '#.*',
       sep = ","):
-      """ and print (a) the column name and (b) its statistics: and print (a) the column name and (b) its statistics:
+      """
       Walk down comma seperated values,
       skipping bad white space and blank lines
       """
@@ -115,8 +121,9 @@ class Table:
     @staticmethod
     def csv(file):
         """
-        Convert rows of strings to ints,floats, or strings
-        as appropriate
+        Convert rows of strings to ints, floats, or strings as appropriate
+        (assuming a .csv file.
+        First yielded row is the header.
         """
         def atoms(lst):
             return map(atom,lst)
@@ -128,9 +135,35 @@ class Table:
         for row in Table.parse_rows(file, prep=atoms):
             yield row
 
+    @staticmethod
+    def arff(file):
+        """
+        Convert rows of strings to int, floats, or strings as appropriate
+        (assuming an .arff file).
+        First yielded row is the header.
+        """
+        def atoms(lst):
+            return map(atom,lst)
+        def atom(x)  :
+            try: return int(x)
+            except:
+                try: return float(x)
+                except ValueError: return x
+        header = []
+
+        row_generator = Table.parse_rows(file, prep=atoms)
+        row = row_generator.next()
+        while "@data" not in row[0].lower():
+            if "@attribute" in row[0].lower():
+                header.append(row[0].split(" ")[1])
+            row = row_generator.next()
+        yield header
+        for row in row_generator:
+            yield row
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-csv_filename", type=str)
+    parser.add_argument("-dataset", type=str, required=True)
     args = parser.parse_args()
-    table = Table(args.csv_filename)
+    table = Table(args.dataset)
     table.print_statistics()
