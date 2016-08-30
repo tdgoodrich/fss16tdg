@@ -33,7 +33,7 @@ zeror() {
 }
 ```
 
-Finally, made a new ``eg11`` by adding ``zeror`` to the learners from ``eg10``. The output after training looks like this:
+Finally, I made a new ``eg11`` by adding ``zeror`` to the learners from ``eg10``. The output after training looks like this:
 
 ```
 pd
@@ -93,7 +93,7 @@ def populate(self, filename):
             col.add(item)
 ```
 
-I first pop off the CSV's header to keep track of the column names for prettier output, then use the first data row to construct the appropriate ``Num`` or ``Sym`` object with ``Table.construct_column(item)``. The rest of the data is then read into the rows and statistics are tracked per column.
+I first pop off the CSV's header to keep track of the column names for prettier output, then use the first data row to construct the appropriate ``Num`` or ``Sym`` objects with ``Table.construct_column(item)``. The rest of the data is then read into the rows and statistics are tracked per column.
 
 At the end, I run a ``print_statistics`` method that iterates through the columns and prints their names and statistics:
 
