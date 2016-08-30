@@ -1,1 +1,4 @@
-misc/
+code/dotninja/
+*.csv
+*.arff
+*.pyc
