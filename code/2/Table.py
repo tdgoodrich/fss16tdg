@@ -58,7 +58,8 @@ class Sym:
         return tmp
 
     def show(self):
-        return "type: symbolic, mode: %s, entropy: %f" % (self.mode, self.entropy())
+        return "type: symbolic, mode: %s, entropy: %f" % (self.mode,
+          self.entropy())
 
 class Table:
     def __init__(self, filename):
