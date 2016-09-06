@@ -149,6 +149,13 @@ class Table:
         return math.sqrt(sum([col.distance(item1, item2) for col, item1,
           item2 in zip(self.cols, row1, row2)]))
 
+    def row_distances(self, new_row):
+        """
+        Generates the distance of new_row from each row in the table.
+        """
+        for row in self.rows:
+            yield self.row_distance(new_row, row)
+
     def size(self):
         return len(self.rows)
 
