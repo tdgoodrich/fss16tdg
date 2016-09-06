@@ -235,18 +235,28 @@ def hw3():
     args = parser.parse_args()
     table = Table(args.dataset)
 
-    # Details for row 1
+    class Item():
+        def __init__(self, row, distance):
+            self.row = row
+            self.distance = distance
+
     def print_extremals(i):
+        """
+        Print closest and furthest rows to row i.
+        """
         print ("Row %d          : " % (i+1)) + str(table.rows[i])
         other_rows = chain(xrange(0, i), xrange(i+1,table.size()))
-        # Comute distances ignoring the outcome column
-        distances = [(table.row_distance(table.rows[0][:-1],
-          table.rows[j][:-1]), table.rows[j]) for j in other_rows]
-        print "-- closest row : " + str(min(distances,
-          key=lambda item: item[0])[1])
-        print "-- furthest row: " + str(max(distances,
-          key=lambda item: item[0])[1])
 
+        # Comute distances ignoring the outcome column
+        distances = [Item(row=table.rows[j],
+          distance=table.row_distance(table.rows[i][:-1],
+          table.rows[j][:-1])) for j in other_rows]
+        print "-- closest row : " + str(min(distances,
+          key=lambda item: item.distance).row)
+        print "-- furthest row: " + str(max(distances,
+          key=lambda item: item.distance).row)
+
+    # Output closest for first two rows
     print_extremals(0)
     print_extremals(1)
 

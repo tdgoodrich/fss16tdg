@@ -23,6 +23,6 @@ Row 1          : ['sunny', 85, 85, 'FALSE', 0]
 -- closest row : ['sunny', 72, 95, 'FALSE', 0]
 -- furthest row: ['overcast', 64, 65, 'TRUE', 2]
 Row 2          : ['sunny', 80, 90, 'TRUE', 0]
--- closest row : ['sunny', 85, 85, 'FALSE', 0]
--- furthest row: ['overcast', 64, 65, 'TRUE', 2]
+-- closest row : ['sunny', 75, 70, 'TRUE', 2]
+-- furthest row: ['rainy', 68, 80, 'FALSE', 1]
 ```
