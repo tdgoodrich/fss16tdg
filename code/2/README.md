@@ -68,14 +68,17 @@ For the Table class, I used a straightforward constructor that recognized if we 
 
 ```python
 def __init__(self, filename):
+    """
+    Initialize the Table object with
+    - rows: The rows of data
+    - cols: Some statistics we keep for each column
+    - header: The name of each column, as a row
+    - file_reader: Function for correctly (csv/arff) reading the filename
+    """
     self.rows = []
     self.cols = []
     self.header = []
-    self.file_reader = None
-    if filename.split(".")[-1] == "csv":
-        self.file_reader = Table.csv
-    elif filename.split(".")[-1] == "arff":
-        self.file_reader = Table.arff
+    self.file_reader = Table.choose_file_reader(filename)
     self.populate(filename)
 ```
 
@@ -83,10 +86,13 @@ The ``populate`` method takes in a filename and populates the ``rows``, ``cols``
 
 ```python
 def populate(self, filename):
+    """
+    Populate this Table object with the data in filename.
+    """
     row_generator = self.file_reader(filename)
     self.header = row_generator.next()
     self.rows.append(row_generator.next())
-    self.cols = [Table.construct_column(item) for item in self.rows[-1]]
+    self.cols = map(Table.construct_column, self.rows[-1])
     for row in row_generator:
         self.rows.append(row)
         for item, col in zip(row, self.cols):
@@ -98,11 +104,11 @@ I first pop off the CSV's header to keep track of the column names for prettier 
 At the end, I run a ``print_statistics`` method that iterates through the columns and prints their names and statistics:
 
 ```
-$ python Table.py -dataset weather.csv
+$ python Table.py -dataset weather.arff
 Column Name         Statistics
-outlook             mode: sunny, entropy: 1.577406
-temperature-        mean: 73.571429, standard deviation: 6.571667
-<humidity           mean: 81.642857, standard deviation: 10.285218
-windy               mode: FALSE, entropy: 0.985228
->play               mean: 1.071429, standard deviation: 0.997249
+outlook             type: symbolic, mode: sunny, entropy: 1.577406
+temperature         type: numeric, mean: 73.571429, standard deviation: 6.571667
+humidity            type: numeric, mean: 81.642857, standard deviation: 10.285218
+windy               type: symbolic, mode: FALSE, entropy: 0.985228
+play                type: symbolic, mode: yes, entropy: 0.940286
 ```

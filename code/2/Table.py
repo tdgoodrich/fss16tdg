@@ -6,12 +6,11 @@ def min(x,y) : return x if x<y else y
 # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/hw2.md
 class Num:
     def __init__(self):
-        self.sum,self.mu,self.n,self.m2,self.up,self.lo = 0,0,0,0,-10e32,10e32
+        self.mu,self.n,self.m2,self.up,self.lo = 0,0,0,-10e32,10e32
 
     def add(self,x):
         self.n += 1
         x = float(x)
-        self.sum += x
         if x > self.up: self.up=x
         if x < self.lo: self.lo=x
         delta = x - self.mu
@@ -29,7 +28,7 @@ class Num:
         return 0 if self.n <= 2 else (self.m2/(self.n - 1))**0.5
 
     def show(self):
-        return "mean: %f, standard deviation: %f" % (self.sum/self.n,
+        return "type: numeric, mean: %f, standard deviation: %f" % (self.mu,
           self.standard_deviation())
 
 # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/hw2.md
@@ -59,39 +58,60 @@ class Sym:
         return tmp
 
     def show(self):
-        return "mode: %s, entropy: %f" % (self.mode, self.entropy())
+        return "type: symbolic, mode: %s, entropy: %f" % (self.mode, self.entropy())
 
 class Table:
     def __init__(self, filename):
+        """
+        Initialize the Table object with
+        - rows: The rows of data
+        - cols: Some statistics we keep for each column
+        - header: The name of each column, as a row
+        - file_reader: Function for correctly (csv/arff) reading the filename
+        """
         self.rows = []
         self.cols = []
         self.header = []
-        self.file_reader = None
-        if filename.split(".")[-1] == "csv":
-            self.file_reader = Table.csv
-        elif filename.split(".")[-1] == "arff":
-            self.file_reader = Table.arff
+        self.file_reader = Table.choose_file_reader(filename)
         self.populate(filename)
 
+    @staticmethod
+    def choose_file_reader(filename):
+        """
+        Check if we were given a csv or arff.
+        """
+        if filename.split(".")[-1] == "csv":
+            return Table.csv
+        elif filename.split(".")[-1] == "arff":
+            return Table.arff
+
     def populate(self, filename):
+        """
+        Populate this Table object with the data in filename.
+        """
         row_generator = self.file_reader(filename)
         self.header = row_generator.next()
         self.rows.append(row_generator.next())
-        self.cols = [Table.construct_column(item) for item in self.rows[-1]]
+        self.cols = map(Table.construct_column, self.rows[-1])
         for row in row_generator:
             self.rows.append(row)
             for item, col in zip(row, self.cols):
                 col.add(item)
 
     def print_statistics(self):
+        """
+        Print the Table's statistics.
+        """
         COL_SIZE = 20
         print "Column Name".ljust(COL_SIZE) + "Statistics"
         for col_name, col in zip(self.header, self.cols):
             print col_name.ljust(COL_SIZE) + col.show()
 
-    # Takes an item and constructs the appropriate column type
     @staticmethod
     def construct_column(item):
+        """
+        Takes an item and constructs the appropriate column type.
+        """
         try:
             col = Num()
             col.add(item)
@@ -161,9 +181,15 @@ class Table:
         for row in row_generator:
             yield row
 
-if __name__ == "__main__":
+def hw2():
+    """
+    Run the stuff we need for homework 2.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("-dataset", type=str, required=True)
     args = parser.parse_args()
     table = Table(args.dataset)
     table.print_statistics()
+
+if __name__ == "__main__":
+    hw2()
