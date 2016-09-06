@@ -16,12 +16,11 @@ from itertools import chain
 # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/hw3.md
 class Num:
     def __init__(self):
-        self.sum,self.mu,self.n,self.m2,self.up,self.lo = 0,0,0,0,-10e32,10e32
+        self.mu,self.n,self.m2,self.up,self.lo = 0,0,0,-10e32,10e32
 
     def add(self,x):
         self.n += 1
         x = float(x)
-        self.sum += x
         if x > self.up: self.up=x
         if x < self.lo: self.lo=x
         delta = x - self.mu
@@ -39,7 +38,7 @@ class Num:
         return 0 if self.n <= 2 else (self.m2/(self.n - 1))**0.5
 
     def show(self):
-        return "mean: %f, standard deviation: %f" % (self.sum/self.n,
+        return "type: numeric, mean: %f, standard deviation: %f" % (self.mu,
           self.standard_deviation())
 
     def norm(self, x):
@@ -82,7 +81,8 @@ class Sym:
         return tmp
 
     def show(self):
-        return "mode: %s, entropy: %f" % (self.mode, self.entropy())
+        return "type: symbolic, mode: %s, entropy: %f" % (self.mode,
+          self.entropy())
 
     def norm(self, x):
         return x
@@ -95,44 +95,68 @@ class Sym:
 
 class Table:
     def __init__(self, filename):
+        """
+        Initialize the Table object with
+        - rows: The rows of data
+        - cols: Some statistics we keep for each column
+        - header: The name of each column, as a row
+        - file_reader: Function for correctly (csv/arff) reading the filename
+        """
         self.rows = []
         self.cols = []
         self.header = []
-        self.file_reader = None
-        if filename.split(".")[-1] == "csv":
-            self.file_reader = Table.csv
-        elif filename.split(".")[-1] == "arff":
-            self.file_reader = Table.arff
+        self.file_reader = Table.choose_file_reader(filename)
         self.populate(filename)
 
+    @staticmethod
+    def choose_file_reader(filename):
+        """
+        Check if we were given a csv or arff.
+        """
+        if filename.split(".")[-1] == "csv":
+            return Table.csv
+        elif filename.split(".")[-1] == "arff":
+            return Table.arff
+
     def populate(self, filename):
+        """
+        Populate this Table object with the data in filename.
+        """
         row_generator = self.file_reader(filename)
         self.header = row_generator.next()
         self.rows.append(row_generator.next())
-        self.cols = [Table.construct_column(item) for item in self.rows[-1]]
+        self.cols = map(Table.construct_column, self.rows[-1])
         for row in row_generator:
             self.rows.append(row)
             for item, col in zip(row, self.cols):
                 col.add(item)
 
     def print_statistics(self):
+        """
+        Print the Table's statistics.
+        """
         COL_SIZE = 20
         print "Column Name".ljust(COL_SIZE) + "Statistics"
         for col_name, col in zip(self.header, self.cols):
             print col_name.ljust(COL_SIZE) + col.show()
 
     # Adapted from Aha's algorithm: http://goo.gl/ZspOeL
-    # Assumes len(row1) == len(row2) == len(self.cols)
     def row_distance(self, row1, row2):
-        return math.sqrt(sum([col.distance(item1, item2) for col, item1, item2 in \
-          zip(self.cols, row1, row2)]))
+        """
+        Compute the distance of row1 from row2 in Table.
+        Assumes len(row1) == len(row2) == len(self.cols).
+        """
+        return math.sqrt(sum([col.distance(item1, item2) for col, item1,
+          item2 in zip(self.cols, row1, row2)]))
 
     def size(self):
         return len(self.rows)
 
-    # Takes an item and constructs the appropriate column type
     @staticmethod
     def construct_column(item):
+        """
+        Takes an item and constructs the appropriate column type.
+        """
         try:
             col = Num()
             col.add(item)
@@ -202,7 +226,10 @@ class Table:
         for row in row_generator:
             yield row
 
-if __name__ == "__main__":
+def hw3():
+    """
+    Run the stuff we need for homework 3.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("-dataset", type=str, required=True)
     args = parser.parse_args()
@@ -222,3 +249,6 @@ if __name__ == "__main__":
 
     print_extremals(0)
     print_extremals(1)
+
+if __name__ == "__main__":
+    hw3()
