@@ -2,28 +2,15 @@ from ../3/Table import Table
 from collections import Counter
 
 class KNN:
-    def __init__(table, k, optimization=None, **kws):
-        self.table = table
+    def __init__(k):
         self.k = k
-        self.predict_function = choose_prediction_function(optimization, kws)
 
-    @staticmethod
-    def choose_prediction_function(optimization, **kws):
-        """
-        Chooses the appropriate optimization function
-        """
-        if optimization == None:
-            return KNN.knn
-        elif optimization == "mini-batch":
-            return None
-        elif optimization == "kd-trees":
-            return None
+    def train(table):
+        self.table = table
 
     def predict(self, row):
-        return self.predict_function(row)
-
-    def knn(self, row):
         """
+        k-nearest neighbors: predict the mode of the closest k neighbors.
         Mode computed by arbitrarily choosing from the most common.
         """
         # Compute the k closest rows in the training table
@@ -43,9 +30,3 @@ class KNN:
             else:
                 continue
         return sorted(outcomes)[0]
-
-    def mini-batch-knn(self):
-        pass
-
-    def kd-trees-knn(self):
-        pass

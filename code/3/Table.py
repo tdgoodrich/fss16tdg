@@ -108,6 +108,18 @@ class Table:
         self.file_reader = Table.choose_file_reader(filename)
         self.populate(filename)
 
+    def row_generator(self, features_only = True):
+        for row in self.rows:
+            yield row[:-1]
+
+    def col_generator(self, features_only = True):
+        if features_only:
+            for col in self.cols[:-1]:
+                yield col
+        else:
+            for col in self.cols:
+                yield col
+
     @staticmethod
     def choose_file_reader(filename):
         """
@@ -153,8 +165,17 @@ class Table:
         """
         Generates the distance of new_row from each row in the table.
         """
+        class Item():
+            def __init__(self, row, distance):
+                self.row = row
+                self.distance = distance
+
         for row in self.rows:
-            yield self.row_distance(new_row, row)
+            yield Item(distance=self.row_distance(new_row, row), row=row)
+
+    def closest(self, new_row):
+        distances = list(self.row_distances(new_row))
+        return min(distances, key=lambda item: item.distance).row
 
     def size(self):
         return len(self.rows)
