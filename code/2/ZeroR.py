@@ -11,7 +11,7 @@ class ZeroR:
 
     def output_predictions(self, testing_data):
         table = Table(testing_data)
-        predictions = [zeror.predict(row) for row in table.rows]
+        predictions = map(self.predict, table.rows)
         SPACING = 15
         print "=== Predictions on test data ===\n"
         print "inst#".rjust(7) + "actual".rjust(7) + "predicted".rjust(11) + "error prediction".rjust(18)
