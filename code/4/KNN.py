@@ -1,12 +1,11 @@
-from ../3/Table import Table
+from Table import Table
 from collections import Counter
+import argparse
 
 class KNN:
-    def __init__(k):
+    def __init__(self, k, training_data):
         self.k = k
-
-    def train(table):
-        self.table = table
+        self.table = Table(training_data)
 
     def predict(self, row):
         """
@@ -17,16 +16,29 @@ class KNN:
         k_closest = sorted(list(self.table.row_distances(row)),
           key=lambda item: item.distance)[:self.k]
 
-        # Return the most common outcome
-        # Need to be careful here: Counter.most_common() is unsorted beyond
-        # the actual counts. For reproducability we lexicographically sort the
-        # most common items before returning one.
-        initial_counts = Counter([row[-1] for row in k_closest]).most_common()
-        outcomes = [initial_counts[0][0]]
-        max_count = initial_counts[0][1]
-        for outcome, count in initial_counts[1:]:
-            if count == max_count:
-                outcomes.append(outcome)
-            else:
-                continue
-        return sorted(outcomes)[0]
+        frequencies = {}
+        for row in k_closest:
+            outcome = row.row[-1]
+            frequencies[outcome] = frequencies.get(outcome, 0) + 1
+        return max(frequencies, key=frequencies.get)
+
+    def output_predictions(self, testing_data):
+        table = Table(testing_data)
+        predictions = map(self.predict, table.rows)
+        SPACING = 15
+        print "=== Predictions on test data ===\n"
+        print "inst#".rjust(7) + "actual".rjust(7) + "predicted".rjust(11) + "error prediction".rjust(18)
+        for i, predicted in zip(xrange(len(predictions)), predictions):
+            actual = str(table.rows[i][-1]).replace("false","2:false").replace("true", "1:true")
+            predicted = str(predicted).replace("false","2:false").replace("true", "1:true")
+            print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
+              " " + str(predicted).rjust(11) +\
+              " " + str(actual==predicted).rjust(18)
+
+if __name__=="__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-train", type=str, help="Filename for the training data", required=True)
+    parser.add_argument("-test", type=str, help="Filename for the testing data", required=True)
+    args = parser.parse_args()
+    knn = KNN(k=20, training_data=args.train)
+    knn.output_predictions(args.test)
