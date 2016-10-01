@@ -5,10 +5,10 @@ See [``project.md``](https://github.com/tdgoodrich/fss16tdg/tree/master/project/
 
 ## Nearest Neighbor
 
-### KNN
+Update 9/30: Since last week I added some code to Minibatch and got KNN working with dotninja.
 
-I wrote KNN as a class, initialized with a `Table` object of training data and a `k` value, and called with a `predict` method.
+%### KNN
 
-### Mini-Batch K-Means
+%### Mini-Batch K-Means
 
-### KD-Trees
+%### KD-Trees
