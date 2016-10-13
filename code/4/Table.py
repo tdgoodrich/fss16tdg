@@ -106,9 +106,12 @@ class Table:
         self.rows = []
         self.cols = []
         self.header = []
-        self.file_reader = Table.choose_file_reader(filename)
-        self.populate(filename)
+        if filename.split(".")[-1] == "csv":
+            self.populate(filename, Table.csv(filename))
+        elif filename.split(".")[-1] == "arff":
+            self.populate(filename, Table.arff(filename))
 
+    # Gets
     def row_generator(self, features_only = True):
         for row in self.rows:
             yield row[:-1]
@@ -121,25 +124,14 @@ class Table:
             for col in self.cols:
                 yield col
 
-    @staticmethod
-    def choose_file_reader(filename):
-        """
-        Check if we were given a csv or arff.
-        """
-        if filename.split(".")[-1] == "csv":
-            return Table.csv
-        elif filename.split(".")[-1] == "arff":
-            return Table.arff
-
-    def populate(self, filename):
+    def populate(self, filename, file_reader):
         """
         Populate this Table object with the data in filename.
         """
-        row_generator = self.file_reader(filename)
-        self.header = row_generator.next()
-        self.rows.append(row_generator.next())
+        self.header = file_reader.next()
+        self.rows.append(file_reader.next())
         self.cols = map(Table.construct_column, self.rows[-1])
-        for row in row_generator:
+        for row in file_reader:
             self.rows.append(row)
             for item, col in zip(row, self.cols):
                 col.add(item)
