@@ -1,6 +1,7 @@
 """
 Table.py : A table class for reading in datasets (CSV and arff supported).
 Limitations and assumptions:
+- Assumes that the last column from input is the outcome, and the rest are features. To change this, we'd need to update the input readers; internally, features and outcomes are separated.
 - Currently assumes a complete dataset (i.e. no missing values). If this needs
   to change then the distance methods need to be updated.
 - Assumes that the dataset file comes with an appropriate header:
@@ -19,7 +20,7 @@ class Num:
         self.mu = 0
         self.n = 0
         self.m2 = 0
-        self.up = -float("inf")
+        self.up = float("-inf")
         self.lo = float("inf")
         self.name = col_name
         self.add(first_item)
@@ -105,7 +106,16 @@ class Sym:
     def furthest(self, x):
         return None
 
+class Row:
+    def __init__(self, features, outcomes):
+        self.features = features
+        self.outcomes = outcomes
 
+    def __iter__(self):
+        for item in self.features:
+            yield item
+        for item in self.outcomes:
+            yield item
 
 class Table:
     # Constructor
@@ -116,7 +126,7 @@ class Table:
         - cols: Some statistics we keep for each column
         """
         self.rows = []
-        self.cols = []
+        self.cols = None
         if filename.split(".")[-1] == "csv":
             self.populate(filename, Table.csv(filename))
         elif filename.split(".")[-1] == "arff":
@@ -125,18 +135,21 @@ class Table:
     def populate(self, filename, file_reader):
         """
         Populate this Table object with the data in filename.
+        Hard coded choice that features are the first n-1 items.
         """
+        # Initialize first data row and the column statistics row
         header = file_reader.next()
+        row = file_reader.next()
+        features = row[:-1]
+        outcomes = row[-1:]
+        self.rows.append(Row(features, outcomes))
+        col_features = map(Table.construct_column, zip(features, header[:-1]))
+        col_outcomes = map(Table.construct_column, zip(outcomes, header[-1:]))
+        self.cols = Row(col_features, col_outcomes)
 
-        # Add first data row to Table
-        self.rows.append(file_reader.next())
-
-        # Initialize the columns
-        self.cols = map(Table.construct_column, zip(self.rows[-1], header))
-
-        # Read in and store the rest of the data
+        # Read in the rest
         for row in file_reader:
-            self.rows.append(row)
+            self.rows.append(Row(features=row[:-1], outcomes=row[-1:]))
             for item, col in zip(row, self.cols):
                 col.add(item)
 
@@ -213,17 +226,15 @@ class Table:
             yield row
 
     # Gets
-    def row_generator(self, features_only = True):
-        for row in self.rows:
-            yield row[:-1]
-
-    def col_generator(self, features_only = True):
+    def iterate_rows(self, features_only=True):
         if features_only:
-            for col in self.cols[:-1]:
+            for row in self.rows:
+                yield row.features
+
+    def iterate_cols(self, features_only=True):
+        if features_only:
+            for col in self.cols.features:
                 yield col
-        else:
-            for col in self.cols:
-                    yield col
 
     # Prints
     def print_statistics(self):
@@ -241,28 +252,37 @@ class Table:
     def row_distance(self, row1, row2):
         """
         Compute the distance of row1 from row2 in Table.
+        Assumes that row1, row2, and self.cols are the full Row object,
+        so we can pull out the features.
         Assumes len(row1) == len(row2) == len(self.cols).
         """
         return math.sqrt(sum([col.distance(item1, item2) for col, item1,
-          item2 in zip(self.cols, row1, row2)]))
+          item2 in zip(self.cols.features, row1.features, row2.features)]))
 
     def row_distances(self, new_row):
         """
         Generates the distance of new_row from each row in the table.
         """
-        class Item():
+        class DistanceItem():
             def __init__(self, row, distance):
                 self.row = row
                 self.distance = distance
 
         for row in self.rows:
-            yield Item(distance=self.row_distance(new_row, row), row=row)
+            yield DistanceItem(distance=self.row_distance(new_row, row),
+              row=row)
 
     def closest(self, new_row):
+        """
+        Returns the closest Row object in the Table.
+        """
         distances = list(self.row_distances(new_row))
         return min(distances, key=lambda item: item.distance).row
 
     def size(self):
+        """
+        Returns the table size.
+        """
         return len(self.rows)
 
 
