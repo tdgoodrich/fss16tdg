@@ -9,14 +9,20 @@ Limitations and assumptions:
 """
 
 
-import re, argparse, math
+import re, argparse, math, sys
 from itertools import chain
 
 # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/hw2.md
 # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/hw3.md
 class Num:
-    def __init__(self):
-        self.mu,self.n,self.m2,self.up,self.lo = 0,0,0,-10e32,10e32
+    def __init__(self, first_item, col_name):
+        self.mu = 0
+        self.n = 0
+        self.m2 = 0
+        self.up = -float("inf")
+        self.lo = float("inf")
+        self.name = col_name
+        self.add(first_item)
 
     def add(self,x):
         self.n += 1
@@ -42,7 +48,7 @@ class Num:
           self.standard_deviation())
 
     def norm(self, x):
-        tmp= (x - self.lo) / (self.up - self.lo + 10**-32)
+        tmp= (x - self.lo) / (self.up - self.lo + sys.float_info.epsilon)
         if tmp > 1: return 1
         elif tmp < 0: return 0
         else: return tmp
@@ -57,8 +63,13 @@ class Num:
 # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/hw2.md
 # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/hw3.md
 class Sym:
-    def __init__(self):
-        self.counts, self.most, self.mode, self.n = {},0,None,0
+    def __init__(self, first_item, col_name):
+        self.counts = {}
+        self.most = 0
+        self.mode = None
+        self.n = 0
+        self.name = col_name
+        self.add(first_item)
 
     def add(self,x):
         self.n += 1
@@ -94,96 +105,50 @@ class Sym:
     def furthest(self, x):
         return None
 
+
+
 class Table:
+    # Constructor
     def __init__(self, filename):
         """
         Initialize the Table object with
         - rows: The rows of data
         - cols: Some statistics we keep for each column
-        - header: The name of each column, as a row
-        - file_reader: Function for correctly (csv/arff) reading the filename
         """
         self.rows = []
         self.cols = []
-        self.header = []
         if filename.split(".")[-1] == "csv":
             self.populate(filename, Table.csv(filename))
         elif filename.split(".")[-1] == "arff":
             self.populate(filename, Table.arff(filename))
 
-    # Gets
-    def row_generator(self, features_only = True):
-        for row in self.rows:
-            yield row[:-1]
-
-    def col_generator(self, features_only = True):
-        if features_only:
-            for col in self.cols[:-1]:
-                yield col
-        else:
-            for col in self.cols:
-                yield col
-
     def populate(self, filename, file_reader):
         """
         Populate this Table object with the data in filename.
         """
-        self.header = file_reader.next()
+        header = file_reader.next()
+
+        # Add first data row to Table
         self.rows.append(file_reader.next())
-        self.cols = map(Table.construct_column, self.rows[-1])
+
+        # Initialize the columns
+        self.cols = map(Table.construct_column, zip(self.rows[-1], header))
+
+        # Read in and store the rest of the data
         for row in file_reader:
             self.rows.append(row)
             for item, col in zip(row, self.cols):
                 col.add(item)
 
-    def print_statistics(self):
-        """
-        Print the Table's statistics.
-        """
-        COL_SIZE = 20
-        print "Column Name".ljust(COL_SIZE) + "Statistics"
-        for col_name, col in zip(self.header, self.cols):
-            print col_name.ljust(COL_SIZE) + col.show()
-
-    # Adapted from Aha's algorithm: http://goo.gl/ZspOeL
-    def row_distance(self, row1, row2):
-        """
-        Compute the distance of row1 from row2 in Table.
-        Assumes len(row1) == len(row2) == len(self.cols).
-        """
-        return math.sqrt(sum([col.distance(item1, item2) for col, item1,
-          item2 in zip(self.cols, row1, row2)]))
-
-    def row_distances(self, new_row):
-        """
-        Generates the distance of new_row from each row in the table.
-        """
-        class Item():
-            def __init__(self, row, distance):
-                self.row = row
-                self.distance = distance
-
-        for row in self.rows:
-            yield Item(distance=self.row_distance(new_row, row), row=row)
-
-    def closest(self, new_row):
-        distances = list(self.row_distances(new_row))
-        return min(distances, key=lambda item: item.distance).row
-
-    def size(self):
-        return len(self.rows)
-
     @staticmethod
-    def construct_column(item):
+    def construct_column((item, name)):
         """
         Takes an item and constructs the appropriate column type.
         """
         try:
-            col = Num()
-            col.add(item)
+            col = Num(item, name)
         except:
-            col = Sym()
-            col.add(item)
+            col = Sym(item, name)
         return col
 
     # Adapted from timm's https://github.com/txt/fss16/blob/master/src/rows.py
@@ -246,6 +211,61 @@ class Table:
         yield header
         for row in row_generator:
             yield row
+
+    # Gets
+    def row_generator(self, features_only = True):
+        for row in self.rows:
+            yield row[:-1]
+
+    def col_generator(self, features_only = True):
+        if features_only:
+            for col in self.cols[:-1]:
+                yield col
+        else:
+            for col in self.cols:
+                    yield col
+
+    # Prints
+    def print_statistics(self):
+        """
+        Print the Table's statistics.
+        """
+        COL_SIZE = 20
+        print "Column Name".ljust(COL_SIZE) + "Statistics"
+        for col in self.cols:
+            print col.name.ljust(COL_SIZE) + col.show()
+
+    # Internal methods
+
+    # Adapted from Aha's algorithm: http://goo.gl/ZspOeL
+    def row_distance(self, row1, row2):
+        """
+        Compute the distance of row1 from row2 in Table.
+        Assumes len(row1) == len(row2) == len(self.cols).
+        """
+        return math.sqrt(sum([col.distance(item1, item2) for col, item1,
+          item2 in zip(self.cols, row1, row2)]))
+
+    def row_distances(self, new_row):
+        """
+        Generates the distance of new_row from each row in the table.
+        """
+        class Item():
+            def __init__(self, row, distance):
+                self.row = row
+                self.distance = distance
+
+        for row in self.rows:
+            yield Item(distance=self.row_distance(new_row, row), row=row)
+
+    def closest(self, new_row):
+        distances = list(self.row_distances(new_row))
+        return min(distances, key=lambda item: item.distance).row
+
+    def size(self):
+        return len(self.rows)
+
+
 
 if __name__ == "__main__":
     pass
