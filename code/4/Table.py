@@ -9,9 +9,7 @@ Limitations and assumptions:
   arff: @attribute labels
 """
 
-
-import re, argparse, math, sys
-from itertools import chain
+import argparse, itertools, math, re, sys
 
 # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/hw2.md
 # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/hw3.md
@@ -119,7 +117,7 @@ class Row:
 
 class Table:
     # Constructor
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         """
         Initialize the Table object with
         - rows: The rows of data
@@ -127,16 +125,18 @@ class Table:
         """
         self.rows = []
         self.cols = None
-        if filename.split(".")[-1] == "csv":
-            self.populate(filename, Table.csv(filename))
-        elif filename.split(".")[-1] == "arff":
-            self.populate(filename, Table.arff(filename))
+        if filename != None:
+            if filename.split(".")[-1] == "csv":
+                self.populate(Table.csv(filename))
+            elif filename.split(".")[-1] == "arff":
+                self.populate(Table.arff(filename))
 
-    def populate(self, filename, file_reader):
+    def populate(self, file_reader):
         """
         Populate this Table object with the data in filename.
         Hard coded choice that features are the first n-1 items.
         """
+
         # Initialize first data row and the column statistics row
         header = file_reader.next()
         row = file_reader.next()
@@ -150,6 +150,21 @@ class Table:
         # Read in the rest
         for row in file_reader:
             self.rows.append(Row(features=row[:-1], outcomes=row[-1:]))
+            for item, col in zip(row, self.cols):
+                col.add(item)
+
+    def add_row(self, row):
+        """
+        Add a single row. Populate self.cols if not already populated
+        """
+        self.rows.append(row)
+        if self.cols is None:
+            col_features = map(Table.construct_column,
+              itertools.izip_longest(row.features, []))
+            col_outcomes = map(Table.construct_column,
+              itertools.izip_longest(row.outcomes, []))
+            self.cols = Row(col_features, col_outcomes)
+        else:
             for item, col in zip(row, self.cols):
                 col.add(item)
 
@@ -230,10 +245,16 @@ class Table:
         if features_only:
             for row in self.rows:
                 yield row.features
+        else:
+            for row in self.rows:
+                yield row
 
     def iterate_cols(self, features_only=True):
         if features_only:
             for col in self.cols.features:
+                yield col
+        else:
+            for col in self.cols.features + self.cols.outcomes:
                 yield col
 
     # Prints
@@ -284,8 +305,6 @@ class Table:
         Returns the table size.
         """
         return len(self.rows)
-
-
 
 if __name__ == "__main__":
     pass

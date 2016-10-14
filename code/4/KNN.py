@@ -18,19 +18,21 @@ class KNN:
 
         frequencies = {}
         for row in k_closest:
-            outcome = row.row[-1]
+            outcome = row.row.outcomes[0] # Assuming one outcome
             frequencies[outcome] = frequencies.get(outcome, 0) + 1
         return max(frequencies, key=frequencies.get)
 
     def output_predictions(self, testing_data):
-        table = Table(testing_data)
-        predictions = map(self.predict, table.rows)
-        SPACING = 15
+        test_table = Table(testing_data)
+        predictions = map(self.predict, test_table.rows)
         print "=== Predictions on test data ===\n"
-        print "inst#".rjust(7) + "actual".rjust(7) + "predicted".rjust(11) + "error prediction".rjust(18)
+        print "inst#".rjust(7) + "actual".rjust(7) + "predicted".rjust(11) + \
+          "error prediction".rjust(18)
         for i, predicted in zip(xrange(len(predictions)), predictions):
-            actual = str(table.rows[i][-1]).replace("false","2:false").replace("true", "1:true")
-            predicted = str(predicted).replace("false","2:false").replace("true", "1:true")
+            actual = str(test_table.rows[i].outcomes[0]).replace("false",
+              "2:false").replace("true", "1:true")
+            predicted = str(predicted).replace("false",
+              "2:false").replace("true", "1:true")
             print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
               " " + str(predicted).rjust(11) +\
               " " + str(actual==predicted).rjust(18)
