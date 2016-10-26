@@ -43,9 +43,6 @@ class MiniBatchKNN:
             self.centroid_clusters[i] = Table()
             self.centroid_clusters[i].add_row(centroid)
 
-        #for centroid in self.centroid_table.iterate_rows(features_only=False):
-            #print centroid, centroid.features, centroid.outcomes
-
         for _ in xrange(iterations):
             # Read in the new batch
             centroid_cache = {}
@@ -59,7 +56,6 @@ class MiniBatchKNN:
             # Cache the centroid
             for row in batch:
                 centroid_cache[row] = self.centroid_table.closest(row)
-                #print "Row, ", row.features, " Centroid, ", centroid_cache[row].features
 
             # Update the centroids with this assignment
             for row in centroid_cache:
@@ -92,16 +88,11 @@ class MiniBatchKNN:
         k_closest = sorted(list(closest_cluster.row_distances(row)),
           key=lambda item: item.distance)[:self.k_nearest]
 
-        #for item in sorted(list(closest_cluster.row_distances(row)), key=lambda item: item.distance):
-        #    print item.row.outcomes, item.distance
         frequencies = {}
         for row in k_closest:
             outcome = row.row.outcomes[0] # Assuming one outcome
             frequencies[outcome] = frequencies.get(outcome, 0) + 1
-        foo = max(frequencies, key=frequencies.get)
-        #print k_closest[0].row.outcomes, k_closest[0].distance
-        return foo
-
+        return max(frequencies, key=frequencies.get)
 
     def output_predictions(self, testing_data):
         test_table = Table(testing_data)
@@ -111,9 +102,9 @@ class MiniBatchKNN:
           "error prediction".rjust(18)
         for i, predicted in zip(xrange(len(predictions)), predictions):
             actual = str(test_table.rows[i].outcomes[0]).replace("false",
-              "2:false").replace("true", "1:true")
+              "2:false").replace("true", "1:true").replace("wine1", "1:wine1").replace("wine2", "2:wine2").replace("wine3", "3:wine3")
             predicted = str(predicted).replace("false",
-              "2:false").replace("true", "1:true")
+              "2:false").replace("true", "1:true").replace("wine1", "1:wine1").replace("wine2", "2:wine2").replace("wine3", "3:wine3")
             print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
               " " + str(predicted).rjust(11) +\
               " " + str(int(actual==predicted)).rjust(18)

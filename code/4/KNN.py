@@ -16,18 +16,11 @@ class KNN:
         k_closest = sorted(list(self.table.row_distances(row)),
           key=lambda item: item.distance)[:self.k]
 
-        #print "closest: "
-        #for item in k_closest:
-        #   print item.row, item.row.features, item.row.outcomes, item.distance
-
         frequencies = {}
         for row in k_closest:
             outcome = row.row.outcomes[0] # Assuming one outcome
             frequencies[outcome] = frequencies.get(outcome, 0) + 1
-        #print frequencies
-        #print k_closest[0].row.outcomes, k_closest[0].distance
         return max(frequencies, key=frequencies.get)
-
 
     def output_predictions(self, testing_data):
         test_table = Table(testing_data)
@@ -37,9 +30,9 @@ class KNN:
           "error prediction".rjust(18)
         for i, predicted in zip(xrange(len(predictions)), predictions):
             actual = str(test_table.rows[i].outcomes[0]).replace("false",
-              "2:false").replace("true", "1:true")
+              "2:false").replace("true", "1:true").replace("wine1", "1:wine1").replace("wine2", "2:wine2").replace("wine3", "3:wine3")
             predicted = str(predicted).replace("false",
-              "2:false").replace("true", "1:true")
+              "2:false").replace("true", "1:true").replace("wine1", "1:wine1").replace("wine2", "2:wine2").replace("wine3", "3:wine3")
             print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
               " " + str(predicted).rjust(11) +\
               " " + str(int(actual==predicted)).rjust(18)

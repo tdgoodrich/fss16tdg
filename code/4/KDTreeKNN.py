@@ -87,12 +87,12 @@ class KDTreeKNN(object):
           "error prediction".rjust(18)
         for i, predicted in zip(xrange(len(predictions)), predictions):
             actual = str(test_table.rows[i].outcomes[0]).replace("false",
-              "2:false").replace("true", "1:true")
+              "2:false").replace("true", "1:true").replace("wine1", "1:wine1").replace("wine2", "2:wine2").replace("wine3", "3:wine3")
             predicted = str(predicted).replace("false",
-              "2:false").replace("true", "1:true")
+              "2:false").replace("true", "1:true").replace("wine1", "1:wine1").replace("wine2", "2:wine2").replace("wine3", "3:wine3")
             print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
               " " + str(predicted).rjust(11) +\
-              " " + str(actual==predicted).rjust(18)
+              " " + str(int(actual==predicted)).rjust(18)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
