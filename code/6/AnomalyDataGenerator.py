@@ -56,7 +56,7 @@ class AnomalyDataGenerator:
                 batch.add_row(self.phase1_data())
             return batch
 
-        elif era < 20:
+        else:
             batch = Table()
             for _ in xrange(100):
                 batch.add_row(self.phase2_data())

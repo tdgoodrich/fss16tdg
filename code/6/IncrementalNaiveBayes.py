@@ -1,11 +1,12 @@
 from Table import Table
 from AnomalyDataGenerator import AnomalyDataGenerator
-from collections import Counter
-import argparse, sys
+#from stats import a12
+import argparse, math, sys
 
 class IncrementalNaiveBayes:
 
-    def __init__(self):
+    def __init__(self, outcomes):
+        self.outcomes = outcomes
         self.seen_outcomes = set()
         self.outcome_counts = {}
         self.outcome_tables = {}
@@ -29,9 +30,7 @@ class IncrementalNaiveBayes:
         """
 
         result = float(self.outcome_counts.get(outcome, 0)) / sum(self.outcome_counts.itervalues())
-        # print "Initial result: ", self.outcome_counts.get(outcome, 0), sum(self.outcome_counts.itervalues())
         for feature, col in zip(row.features, self.outcome_tables[outcome].iterate_cols(features_only=True)):
-            # print "Next eval: ", col.bayes_evaluate(feature)
             result *= col.bayes_evaluate(feature)
         return result
 
@@ -43,28 +42,39 @@ class IncrementalNaiveBayes:
         # Compute and normalize scores
         scores = [self.evaluate_outcome(row, outcome) for outcome in \
          self.seen_outcomes]
-        # print "original scores:\n", scores
         sum_cache = sum(scores) + sys.float_info.epsilon
         scores = map(lambda x: x / sum_cache, scores)
-        # print "normalized scores:\n", scores
 
         # Return the outcome with the highest normalized score
         return sorted(zip(self.seen_outcomes, scores), key=lambda x: x[1],
-         reverse=True)[0][0]
+         reverse=True)[0]
 
     def output_predictions(self, test_table):
         predictions = map(self.predict, test_table.rows)
-        print "=== Predictions on test data ===\n"
-        print "inst#".rjust(7) + "actual".rjust(7) + "predicted".rjust(11) + \
-          "error prediction".rjust(18)
-        for i, predicted in zip(xrange(len(predictions)), predictions):
-            actual = str(test_table.rows[i].outcomes[0]).replace("false",
-              "2:false").replace("true", "1:true")
-            predicted = str(predicted).replace("false",
-              "2:false").replace("true", "1:true")
-            print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
-              " " + str(predicted).rjust(11) +\
-              " " + str(int(actual==predicted)).rjust(18)
+
+        for desired_outcome in self.outcomes:
+            b, d = 0, 0
+            for outcome, actual in zip([x[0] for x in predictions], test_table.iterate_rows(features_only=False)):
+                if actual.outcomes[0] == desired_outcome:
+                    if outcome == desired_outcome:
+                        d += 1
+                    else:
+                        b += 1
+            print desired_outcome, " recall: ", float(d) / (b + d + sys.float_info.epsilon)
+        # return the log likelihoods
+        return [math.log(x[1]) for x in predictions]
+
+
+# Adapted from timm's dotninja stats.py
+def a12(list1, list2):
+    more = same = 0.0
+    for x in sorted(list1):
+        for y in sorted(list2):
+            if   x==y :
+                same += 1
+            elif x > y :
+                more += 1
+    return (more + 0.5*same) / (len(list1)*len(list2))
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
@@ -72,12 +82,19 @@ if __name__=="__main__":
       help="Filename for the training data", required=True)
     args = parser.parse_args()
     generator = AnomalyDataGenerator(args.dataset)
-    nb = IncrementalNaiveBayes()
+    nb = IncrementalNaiveBayes(outcomes=["wine1", "wine2", "wine3"])
 
     batch = generator.generate_era(0)
     nb.incremental_train(batch)
-    for era in xrange(1, 20):
+    old_log_likelihood = None
+    for era in xrange(1, 21):
         print "\n*** Era ", era, " ***"
         batch = generator.generate_era(era)
-        nb.output_predictions(batch)
+        log_likelihood = nb.output_predictions(batch)
+        if old_log_likelihood != None:
+            difference = a12(log_likelihood, old_log_likelihood)
+            print "a12: ", difference
+            if difference >= 0.71:
+                print "ANOMALY DETECTED!!"
+        old_log_likelihood = log_likelihood
         nb.incremental_train(batch)

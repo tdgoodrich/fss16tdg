@@ -1,0 +1,120 @@
+
+*** Era  1  ***
+wine1  recall:  0.979591836735
+wine2  recall:  0.941176470588
+wine3  recall:  0.0
+
+*** Era  2  ***
+wine1  recall:  0.961538461538
+wine2  recall:  1.0
+wine3  recall:  0.0
+a12:  0.4629
+
+*** Era  3  ***
+wine1  recall:  0.954545454545
+wine2  recall:  1.0
+wine3  recall:  0.0
+a12:  0.515
+
+*** Era  4  ***
+wine1  recall:  1.0
+wine2  recall:  1.0
+wine3  recall:  0.0
+a12:  0.5116
+
+*** Era  5  ***
+wine1  recall:  0.978723404255
+wine2  recall:  1.0
+wine3  recall:  0.0
+a12:  0.4941
+
+*** Era  6  ***
+wine1  recall:  0.98
+wine2  recall:  1.0
+wine3  recall:  0.0
+a12:  0.5335
+
+*** Era  7  ***
+wine1  recall:  1.0
+wine2  recall:  1.0
+wine3  recall:  0.0
+a12:  0.5243
+
+*** Era  8  ***
+wine1  recall:  1.0
+wine2  recall:  1.0
+wine3  recall:  0.0
+a12:  0.4606
+
+*** Era  9  ***
+wine1  recall:  1.0
+wine2  recall:  1.0
+wine3  recall:  0.0
+a12:  0.4816
+
+*** Era  10  ***
+wine1  recall:  1.0
+wine2  recall:  1.0
+wine3  recall:  0.0
+a12:  0.2986
+
+*** Era  11  ***
+wine1  recall:  0.909090909091
+wine2  recall:  1.0
+wine3  recall:  1.0
+a12:  0.7187
+ANOMALY DETECTED!!
+
+*** Era  12  ***
+wine1  recall:  1.0
+wine2  recall:  1.0
+wine3  recall:  1.0
+a12:  0.4876
+
+*** Era  13  ***
+wine1  recall:  0.888888888889
+wine2  recall:  0.958333333333
+wine3  recall:  1.0
+a12:  0.4913
+
+*** Era  14  ***
+wine1  recall:  1.0
+wine2  recall:  0.944444444444
+wine3  recall:  1.0
+a12:  0.5134
+
+*** Era  15  ***
+wine1  recall:  1.0
+wine2  recall:  1.0
+wine3  recall:  1.0
+a12:  0.4856
+
+*** Era  16  ***
+wine1  recall:  1.0
+wine2  recall:  0.972222222222
+wine3  recall:  1.0
+a12:  0.4758
+
+*** Era  17  ***
+wine1  recall:  1.0
+wine2  recall:  0.95
+wine3  recall:  1.0
+a12:  0.5617
+
+*** Era  18  ***
+wine1  recall:  1.0
+wine2  recall:  1.0
+wine3  recall:  1.0
+a12:  0.5429
+
+*** Era  19  ***
+wine1  recall:  1.0
+wine2  recall:  0.928571428571
+wine3  recall:  1.0
+a12:  0.4828
+
+*** Era  20  ***
+wine1  recall:  1.0
+wine2  recall:  0.965517241379
+wine3  recall:  1.0
+a12:  0.4831
