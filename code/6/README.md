@@ -21,7 +21,7 @@ The ``NaiveBayes`` classifier from Homework 5 didn't need much updating, mostly 
 
 ## Output and anomaly detection
 
-When running on digits data, nearly every prediction was the alphabetically-first class. I found this happened because the data is 256 boolean features (the pixels in a 16x16 grid), and so nearly all of the Naive Bayes likelihoods contained at least one zero (e.g. a blank pixel), which ruined their multiplication. And this makes sense: we don't expect these pixels to be independent at all. Plus they're very grid-like, probably a good fit for decision trees.
+When running on digits data, nearly every prediction was the alphabetically-first class. I found this happened because the data is 256 boolean features (the pixels in a 16x16 grid), and so nearly all of the Naive Bayes likelihoods contained at least one zero (e.g. a pixel is always used in Seven but never in Eight), which ruined their multiplication. And this makes sense: we don't expect these pixels to be independent at all. Plus they're very grid-like, probably a good fit for decision trees.
 
 Wine data looked much better:
 
@@ -144,4 +144,4 @@ a12:  0.4828
 
 ```
 
-As we can see, I detected anomalies by looking for a 20% change from the a12 previous value. At first I was only checking for an increase, but when the ``wine3`` class was introduced I saw that the a12 score actually decreased. But I think this makes sense: a12 gauges how the two distributions interact. A larger a12 score means the distributions are very different, a small means they're pretty close. Either way, if the a12 score changes a lot, then the likelihood distributions have changed and something happened. 
+As we can see, I detected anomalies by looking for a 20% change from the a12 previous value. At first I was only checking for an increase, but when the ``wine3`` class was introduced I saw that the a12 score actually decreased. But I think this makes sense: a12 gauges how the two distributions interact. A larger a12 score means the distributions are very different, a small means they're pretty close. Either way, if the a12 score changes a lot, then the likelihood distributions have changed and something happened.
