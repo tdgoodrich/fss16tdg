@@ -61,14 +61,3 @@ class AnomalyDataGenerator:
             for _ in xrange(100):
                 batch.add_row(self.phase2_data())
             return batch
-
-
-
-# if __name__=="__main__":
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("-dataset", type=str,
-#       help="Filename for the training data", required=True)
-#     args = parser.parse_args()
-#     generator = AnomalyDataGenerator(args.dataset)
-#     for x in generator:
-#         print x.outcomes

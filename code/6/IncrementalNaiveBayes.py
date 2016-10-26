@@ -61,7 +61,7 @@ class IncrementalNaiveBayes:
                     else:
                         b += 1
             print desired_outcome, " recall: ", float(d) / (b + d + sys.float_info.epsilon)
-        # return the log likelihoods
+        # return the log of the likelihoods
         return [math.log(x[1]) for x in predictions]
 
 
@@ -86,15 +86,15 @@ if __name__=="__main__":
 
     batch = generator.generate_era(0)
     nb.incremental_train(batch)
-    old_log_likelihood = None
+    old_likelihood = None
     for era in xrange(1, 21):
         print "\n*** Era ", era, " ***"
         batch = generator.generate_era(era)
-        log_likelihood = nb.output_predictions(batch)
-        if old_log_likelihood != None:
-            difference = a12(log_likelihood, old_log_likelihood)
+        likelihood = nb.output_predictions(batch)
+        if old_likelihood != None:
+            difference = a12(likelihood, old_likelihood)
             print "a12: ", difference
             if difference >= 0.71:
                 print "ANOMALY DETECTED!!"
-        old_log_likelihood = log_likelihood
+        old_likelihood = likelihood
         nb.incremental_train(batch)
