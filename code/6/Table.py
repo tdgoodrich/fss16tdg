@@ -118,7 +118,7 @@ class Sym:
 
     # Adapted from timm's https://github.com/txt/fss16/blob/master/doc/nb.md
     def bayes_evaluate(self, x):
-        return float(self.counts[x]) / self.n
+        return float(self.counts.get(x, 0)) / self.n
 
 class Row:
     def __init__(self, features, outcomes):

@@ -29,28 +29,40 @@ class AnomalyDataGenerator:
             self.outcome_tables.pop(x[0])
 
         self.outcomes = sorted(x[0] for x in most_popular[:3])
+        self.count = 0
+
+    def phase1_data(self):
+        rand = random.random()
+        if rand < 0.5:
+            outcome = self.outcomes[0]
+        else:
+            outcome = self.outcomes[1]
+        return random.choice(self.outcome_tables[outcome].rows)
+
+    def phase2_data(self):
+        rand = random.random()
+        if rand < 0.1:
+            outcome = self.outcomes[0]
+        elif rand < 0.4:
+            outcome = self.outcomes[1]
+        else:
+            outcome = self.outcomes[2]
+        return random.choice(self.outcome_tables[outcome].rows)
+
+    def generate_era(self, era):
+        if era < 10:
+            batch = Table()
+            for _ in xrange(100):
+                batch.add_row(self.phase1_data())
+            return batch
+
+        elif era < 20:
+            batch = Table()
+            for _ in xrange(100):
+                batch.add_row(self.phase2_data())
+            return batch
 
 
-    def __iter__(self):
-        for _ in xrange(100):
-            rand = random.random()
-            if rand < 0.5:
-                outcome = self.outcomes[0]
-            else:
-                outcome = self.outcomes[1]
-            yield random.choice(self.outcome_tables[outcome].rows)
-
-        print "\nBREAAAAAAKKKK\n\n"
-
-        for _ in xrange(100):
-            rand = random.random()
-            if rand < 0.1:
-                outcome = self.outcomes[0]
-            elif rand < 0.4:
-                outcome = self.outcomes[1]
-            else:
-                outcome = self.outcomes[2]
-            yield random.choice(self.outcome_tables[outcome].rows)
 
 # if __name__=="__main__":
 #     parser = argparse.ArgumentParser()

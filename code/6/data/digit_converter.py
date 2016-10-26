@@ -12,7 +12,7 @@ import sys
 digit_names = ["zero", "one", "two", "three", "four", "five", "six", "seven",
                "eight", "nine"]
 
-def convert_file(filename):
+def convert_file(filename, keep):
     with open(filename, "r") as infile, open("digits.arff", "w") as outfile:
 
         # Write arff header
@@ -30,8 +30,9 @@ def convert_file(filename):
             row = line.replace("1.0000", "TRUE").replace("0.0000", "FALSE").split()
             features, outcome = row[:256], row[256:]
             outcome = [digit_names[x] for x in xrange(len(outcome)) if outcome[x] == "1"]
-            row = features + outcome
-            outfile.write(",".join(row) + "\n")
+            if outcome[0] in keep:
+                row = features + outcome
+                outfile.write(",".join(row) + "\n")
 
 if __name__ == "__main__":
-    convert_file("semeion.data")
+    convert_file(filename="semeion.data", keep=["two", "seven", "eight"])
