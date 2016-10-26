@@ -1,6 +1,5 @@
 from Table import Table
 from AnomalyDataGenerator import AnomalyDataGenerator
-#from stats import a12
 import argparse, math, sys
 
 class IncrementalNaiveBayes:
@@ -87,14 +86,16 @@ if __name__=="__main__":
     batch = generator.generate_era(0)
     nb.incremental_train(batch)
     old_likelihood = None
+    old_a12_score = None
     for era in xrange(1, 21):
         print "\n*** Era ", era, " ***"
         batch = generator.generate_era(era)
         likelihood = nb.output_predictions(batch)
-        if old_likelihood != None:
-            difference = a12(likelihood, old_likelihood)
-            print "a12: ", difference
-            if difference >= 0.71:
-                print "ANOMALY DETECTED!!"
+        if old_likelihood is not None:
+            a12_score = a12(likelihood, old_likelihood)
+            print "a12: ", a12_score
+            if old_a12_score is not None and math.fabs(old_a12_score - a12_score) > 0.2 * old_a12_score:
+                print "a12 score different by >20%, ANOMALY DETECTED!!"
+            old_a12_score = a12_score
         old_likelihood = likelihood
         nb.incremental_train(batch)

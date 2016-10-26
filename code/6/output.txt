@@ -57,19 +57,21 @@ wine1  recall:  1.0
 wine2  recall:  1.0
 wine3  recall:  0.0
 a12:  0.2986
+a12 score different by >20%, ANOMALY DETECTED!!
 
 *** Era  11  ***
 wine1  recall:  0.909090909091
 wine2  recall:  1.0
 wine3  recall:  1.0
 a12:  0.7187
-ANOMALY DETECTED!!
+a12 score different by >20%, ANOMALY DETECTED!!
 
 *** Era  12  ***
 wine1  recall:  1.0
 wine2  recall:  1.0
 wine3  recall:  1.0
 a12:  0.4876
+a12 score different by >20%, ANOMALY DETECTED!!
 
 *** Era  13  ***
 wine1  recall:  0.888888888889
