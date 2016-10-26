@@ -2,3 +2,4 @@ code/dotninja/
 *.csv
 *.arff
 *.pyc
+*.data
