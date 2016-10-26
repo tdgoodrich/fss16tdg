@@ -22,6 +22,7 @@ class Num:
         self.lo = float("inf")
         self.name = col_name
         self.add(first_item)
+        self.type="Num"
 
     def add(self,x):
         self.n += 1
@@ -53,8 +54,7 @@ class Num:
         else: return tmp
 
     def distance(self, x, y):
-        dist = self.norm(x) - self.norm(y)
-        return dist if dist > 0 else -1*dist
+        return self.norm(x) - self.norm(y)
 
     def furthest(self, x) :
         return self.up if x < (self.up-self.lo)/2 else self.lo
@@ -69,6 +69,7 @@ class Sym:
         self.n = 0
         self.name = col_name
         self.add(first_item)
+        self.type="Sym"
 
     def add(self,x):
         self.n += 1
@@ -277,7 +278,7 @@ class Table:
         so we can pull out the features.
         Assumes len(row1) == len(row2) == len(self.cols).
         """
-        return math.sqrt(sum([col.distance(item1, item2) for col, item1,
+        return math.sqrt(sum([col.distance(item1, item2)**2 for col, item1,
           item2 in zip(self.cols.features, row1.features, row2.features)]))
 
     def row_distances(self, new_row):

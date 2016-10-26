@@ -4,8 +4,8 @@ import argparse, copy, random, sys
 class Centroid:
     def __init__(self, index, row):
         self.index = index
-        self.features = row.features
-        self.outcomes = row.outcomes
+        self.features = copy.deepcopy(row.features)
+        self.outcomes = copy.deepcopy(row.outcomes)
 
     def __iter__(self):
         for item in self.features:
@@ -15,13 +15,13 @@ class Centroid:
 
 class MiniBatchKNN:
 
-    def __init__(self, k, train_filename = None, seed=42):
-        self.k = k
+    def __init__(self, k_nearest, k_means, train_filename, seed=42):
+        self.k_nearest = k_nearest
+        self.k_means = k_means
         random.seed(seed)
         self.centroid_table = Table()
         self.centroid_clusters = {}
-        if train_filename != None:
-            self.train(Table(train_filename))
+        self.train(Table(train_filename))
 
     def train(self, train_table, batch_size = 100, iterations = None):
         """
@@ -29,18 +29,22 @@ class MiniBatchKNN:
         """
         # initialize variables
         if iterations == None:
-            iterations = train_table.size() / batch_size
+            iterations = train_table.size() / batch_size + 1
         rows = train_table.iterate_rows(features_only=False)
 
         # Store the centroids in a Table.
         # Centroids are rows + an index.
         # The index is used to look up the centroid's cluster,
         # which is stored in its own Table.
-        for i in xrange(self.k):
-            centroid = Centroid(index=i, row=copy.deepcopy(next(rows)))
+        for i in xrange(self.k_means):
+            next_row = next(rows)
+            centroid = Centroid(index=i, row=next(rows))
             self.centroid_table.add_row(centroid)
             self.centroid_clusters[i] = Table()
             self.centroid_clusters[i].add_row(centroid)
+
+        #for centroid in self.centroid_table.iterate_rows(features_only=False):
+            #print centroid, centroid.features, centroid.outcomes
 
         for _ in xrange(iterations):
             # Read in the new batch
@@ -50,11 +54,12 @@ class MiniBatchKNN:
                 try:
                     batch.append(next(rows))
                 except:
-                    continue
+                    break
 
             # Cache the centroid
             for row in batch:
                 centroid_cache[row] = self.centroid_table.closest(row)
+                #print "Row, ", row.features, " Centroid, ", centroid_cache[row].features
 
             # Update the centroids with this assignment
             for row in centroid_cache:
@@ -68,10 +73,10 @@ class MiniBatchKNN:
     def update_centroid(self, centroid, row, cols, learning_rate):
         new_features = []
         for original, new, col in zip(centroid.features, row.features, cols):
-            if type(col) == Num:
+            if col.type == "Num":
                 new_features.append((1.0-learning_rate) * original + \
                   learning_rate * new)
-            elif type(col) == Sym:
+            elif col.type == "Sym":
                 new_features.append(new if learning_rate < random.rand() else \
                   old)
         centroid.features = new_features
@@ -85,12 +90,18 @@ class MiniBatchKNN:
         closest_cluster = self.centroid_clusters[closest_centroid.index]
 
         k_closest = sorted(list(closest_cluster.row_distances(row)),
-          key=lambda item: item.distance)[:self.k]
+          key=lambda item: item.distance)[:self.k_nearest]
+
+        #for item in sorted(list(closest_cluster.row_distances(row)), key=lambda item: item.distance):
+        #    print item.row.outcomes, item.distance
         frequencies = {}
         for row in k_closest:
             outcome = row.row.outcomes[0] # Assuming one outcome
             frequencies[outcome] = frequencies.get(outcome, 0) + 1
-        return max(frequencies, key=frequencies.get)
+        foo = max(frequencies, key=frequencies.get)
+        #print k_closest[0].row.outcomes, k_closest[0].distance
+        return foo
+
 
     def output_predictions(self, testing_data):
         test_table = Table(testing_data)
@@ -105,12 +116,14 @@ class MiniBatchKNN:
               "2:false").replace("true", "1:true")
             print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
               " " + str(predicted).rjust(11) +\
-              " " + str(actual==predicted).rjust(18)
+              " " + str(int(actual==predicted)).rjust(18)
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-train", type=str, help="Filename for the training data", required=True)
-    parser.add_argument("-test", type=str, help="Filename for the testing data", required=True)
+    parser.add_argument("-train", type=str,
+      help="Filename for the training data", required=True)
+    parser.add_argument("-test", type=str,
+      help="Filename for the testing data", required=True)
     args = parser.parse_args()
-    learner = MiniBatchKNN(k=20, train_filename=args.train)
+    learner = MiniBatchKNN(k_nearest=1, k_means=20, train_filename=args.train)
     learner.output_predictions(args.test)

@@ -16,11 +16,18 @@ class KNN:
         k_closest = sorted(list(self.table.row_distances(row)),
           key=lambda item: item.distance)[:self.k]
 
+        #print "closest: "
+        #for item in k_closest:
+        #   print item.row, item.row.features, item.row.outcomes, item.distance
+
         frequencies = {}
         for row in k_closest:
             outcome = row.row.outcomes[0] # Assuming one outcome
             frequencies[outcome] = frequencies.get(outcome, 0) + 1
+        #print frequencies
+        #print k_closest[0].row.outcomes, k_closest[0].distance
         return max(frequencies, key=frequencies.get)
+
 
     def output_predictions(self, testing_data):
         test_table = Table(testing_data)
@@ -35,12 +42,12 @@ class KNN:
               "2:false").replace("true", "1:true")
             print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
               " " + str(predicted).rjust(11) +\
-              " " + str(actual==predicted).rjust(18)
+              " " + str(int(actual==predicted)).rjust(18)
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-train", type=str, help="Filename for the training data", required=True)
     parser.add_argument("-test", type=str, help="Filename for the testing data", required=True)
     args = parser.parse_args()
-    knn = KNN(k=20, training_data=args.train)
+    knn = KNN(k=1, training_data=args.train)
     knn.output_predictions(args.test)

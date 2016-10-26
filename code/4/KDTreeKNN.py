@@ -1,6 +1,5 @@
-import collections
-import itertools
-import math
+import argparse, collections, itertools, math
+from Table import Table
 
 def square_distance(a, b):
     s = 0
@@ -11,7 +10,7 @@ def square_distance(a, b):
 
 Node = collections.namedtuple("Node", 'point axis label left right')
 
-class KDTree(object):
+class KDTreeKNN(object):
     """A tree for nearest neighbor search in a k-dimensional space.
 
     For information about the implementation, see
@@ -19,30 +18,33 @@ class KDTree(object):
 
     Usage:
     objects is an iterable of (point, label) tuples
+    we're using the label to store our outcomes
     k is the number of dimensions
 
     t = KDTree(k, objects)
     point, label, distance = t.nearest_neighbor(destination)
     """
 
-    def __init__(self, k, objects=[]):
+    def __init__(self, k, train_filename):
+        self.k = k
+        rows = Table(train_filename)
+        self.root = self.train([(row.features, row.outcomes) for row in \
+          rows.iterate_rows(features_only=False)])
 
-        def build_tree(objects, axis=0):
+    def train(self, objects, axis=0):
+        if not objects:
+            return None
 
-            if not objects:
-                return None
+        objects.sort(key=lambda o: o[0][axis])
+        median_idx = len(objects) // 2
+        with open("debug.txt", "w") as outfile:
+            outfile.write(str(objects) + "   median_idx: " + str(median_idx))
+        median_point, median_label = objects[median_idx]
 
-            objects.sort(key=lambda o: o[0][axis])
-            median_idx = len(objects) // 2
-            median_point, median_label = objects[median_idx]
-
-            next_axis = (axis + 1) % k
-            return Node(median_point, axis, median_label,
-                        build_tree(objects[:median_idx], next_axis),
-                        build_tree(objects[median_idx + 1:], next_axis))
-
-        self.root = build_tree(list(objects))
-
+        next_axis = (axis + 1) % self.k
+        return Node(median_point, axis, median_label,
+                    self.train(objects[:median_idx], next_axis),
+                    self.train(objects[median_idx + 1:], next_axis))
 
     def nearest_neighbor(self, destination):
 
@@ -70,24 +72,34 @@ class KDTree(object):
         recursive_search(self.root)
         return best[0], best[1], math.sqrt(best[2])
 
+    def predict(self, row):
+        """
+        Look up the closest point and take its outcome.
+        """
+        featues, outcomes, dist = self.nearest_neighbor(row.features)
+        return outcomes[0]
+
+    def output_predictions(self, testing_data):
+        test_table = Table(testing_data)
+        predictions = map(self.predict, test_table.rows)
+        print "=== Predictions on test data ===\n"
+        print "inst#".rjust(7) + "actual".rjust(7) + "predicted".rjust(11) + \
+          "error prediction".rjust(18)
+        for i, predicted in zip(xrange(len(predictions)), predictions):
+            actual = str(test_table.rows[i].outcomes[0]).replace("false",
+              "2:false").replace("true", "1:true")
+            predicted = str(predicted).replace("false",
+              "2:false").replace("true", "1:true")
+            print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
+              " " + str(predicted).rjust(11) +\
+              " " + str(actual==predicted).rjust(18)
+
 if __name__ == '__main__':
-
-    from random import random
-
-    k = 5
-    npoints = 1000
-    lookups = 1000
-    eps = 1e-8
-
-    points = [(tuple(random() for _ in xrange(k)), i)
-              for i in xrange(npoints)]
-
-    tree = KDTree(k, points)
-
-    for _ in xrange(lookups):
-
-        destination = [random() for _ in xrange(k)]
-        _, _, mindistance = tree.nearest_neighbor(destination)
-
-        minsq = min(square_distance(p, destination) for p, _ in points)
-        assert abs(math.sqrt(minsq) - mindistance) < eps
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-train", type=str,
+      help="Filename for the training data", required=True)
+    parser.add_argument("-test", type=str,
+      help="Filename for the testing data", required=True)
+    args = parser.parse_args()
+    learner = KDTreeKNN(k=20, train_filename=args.train)
+    learner.output_predictions(args.test)
