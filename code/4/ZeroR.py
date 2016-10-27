@@ -20,7 +20,8 @@ class ZeroR:
             # enumerate the outcomes:
             actual = str(test_table.rows[i].outcomes[0])
             predicted = str(predicted)
-            for outcome, i in zip(self.seen_outcomes, xrange(1, len(self.seen_outcomes)+1)):
+            outcomes = test_table.cols.outcomes[0].counts.keys()
+            for outcome, i in zip(outcomes, xrange(1, len(outcomes)+1)):
                 if actual == outcome:
                     actual = str(i) + ":" + outcome
                 if predicted == outcome:
