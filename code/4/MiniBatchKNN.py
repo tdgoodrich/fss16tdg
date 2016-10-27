@@ -101,10 +101,14 @@ class MiniBatchKNN:
         print "inst#".rjust(7) + "actual".rjust(7) + "predicted".rjust(11) + \
           "error prediction".rjust(18)
         for i, predicted in zip(xrange(len(predictions)), predictions):
-            actual = str(test_table.rows[i].outcomes[0]).replace("false",
-              "2:false").replace("true", "1:true").replace("wine1", "1:wine1").replace("wine2", "2:wine2").replace("wine3", "3:wine3")
-            predicted = str(predicted).replace("false",
-              "2:false").replace("true", "1:true").replace("wine1", "1:wine1").replace("wine2", "2:wine2").replace("wine3", "3:wine3")
+            # enumerate the outcomes:
+            actual = str(test_table.rows[i].outcomes[0])
+            predicted = str(predicted)
+            for outcome, i in zip(self.seen_outcomes, xrange(1, len(self.seen_outcomes)+1)):
+                if actual == outcome:
+                    actual = str(i) + ":" + outcome
+                if predicted == outcome:
+                    predicted = str(i) + ":" + outcome
             print str(i+1).rjust(7) + " " + str(actual).rjust(7) +\
               " " + str(predicted).rjust(11) +\
               " " + str(int(actual==predicted)).rjust(18)
