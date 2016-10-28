@@ -76,12 +76,36 @@ After the initial experiments, I took the wine.arff dataset from CODE6 and used 
 
 For datasets, I chose CK datasets with varying percents of the target class (always ``true`` for having bugs). For wine, we target the first wine.
 
-| Dataset  | URL  | Rows   | Features  | Classes | % target class  |
+| Dataset  | Source  | Rows   | Features  | Classes | % target class  |
 |---|---|---|---|---|
+| bool_jedit-4.2.arff | [PROMISE Repo](http://openscience.us/repo/defect/ck/jedit.html) | 492 | 20 | 2 | 2% |
 | bool_camel-1.6.arff  | [PROMISE Repo](http://openscience.us/repo/defect/ck/camel.html)   | 965  | 20  | 2  | 19% |
 | bool_lucene-2-4.arff  | [PROMISE Repo](http://openscience.us/repo/defect/ck/lucene.html)   | 340  | 20  | 2  | 60% |
 | bool_xalan-2.7.arff  | [PROMISE Repo](http://openscience.us/repo/defect/ck/xalan.html)   | 909  | 20  | 2  | 98% |
 | wine.arff | [UCI Repo](https://archive.ics.uci.edu/ml/datasets/Wine)  | 178 | 13 | 3 | 33% |
+
+
+```
+bool_jedit-4.2.arff
+
+pd
+rank ,         name ,    med   ,  iqr
+----------------------------------------------------
+   1 ,        zeror ,       0  ,     0 (*              |              ), 0.00,  0.00,  0.00,  0.00,  0.00
+   2 ,        kdknn ,      25  ,    50 (         *    -|------------- ), 0.00,  0.00, 33.00, 50.00, 100.00
+   2 ,        mbknn ,      20  ,    50 (         *    -|----          ), 0.00,  0.00, 33.00, 50.00, 67.00
+   2 ,          knn ,      50  ,    50 (              *| ------------ ), 0.00,  0.00, 50.00, 60.00, 100.00
+
+pf
+rank ,         name ,    med   ,  iqr
+----------------------------------------------------
+   1 ,          knn ,       0  ,     1 (*    ------    |              ), 0.00,  0.00,  0.00,  1.00,  2.00
+   1 ,        zeror ,       0  ,     0 (*              |              ), 0.00,  0.00,  0.00,  0.00,  0.00
+   1 ,        kdknn ,       0  ,     1 (*    ------    |              ), 0.00,  0.00,  0.00,  1.00,  2.00
+   1 ,        mbknn ,       0  ,     1 (*    ----------|-------       ), 0.00,  0.00,  0.00,  1.00,  4.00
+
+```
+
 
 ```
 bool_camel-1.6.arff
@@ -166,9 +190,9 @@ rank ,         name ,    med   ,  iqr
 
 ```
 
-Beyond camel, all versions of KNN performed roughly the same, and on camel the mini-batch KNN had a slightly lower-than-median recall. However, in timing we see the real difference:
+Beyond jedit and camel, all versions of KNN performed roughly the same. On jedit, KNN had the median advantage, and on camel the mini-batch KNN had a slightly lower-than-median recall. However, in timing we see the real difference:
 
 
-![alt text](image.png "Logo Title Text 1")
+![alt text](runtimes.png "Logo Title Text 1")
 
-Based on the much faster run time and indistinguishable solution quality, I would recommend using KDTrees.
+Based on the much faster run time and indistinguishable (up to Scott-Knot) solution quality, I would recommend using KDTrees.
