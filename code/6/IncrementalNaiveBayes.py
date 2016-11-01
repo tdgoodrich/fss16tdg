@@ -20,7 +20,7 @@ class IncrementalNaiveBayes:
                     self.seen_outcomes.add(outcome)
                     self.outcome_counts[outcome] = 0
                     self.outcome_tables[outcome] = Table()
-                self.outcome_counts[outcome] = self.outcome_counts[outcome] + 1
+                self.outcome_counts[outcome] += 1
                 self.outcome_tables[outcome].add_row(row)
 
     def evaluate_outcome(self, row, outcome):
