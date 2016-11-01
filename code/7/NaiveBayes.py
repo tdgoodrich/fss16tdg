@@ -11,6 +11,7 @@ class NaiveBayes:
         self.outcome_tables = {}
         self.train_table = Table(train_filename, discretization)
         self.train()
+        self.discretization = discretization
 
     def train(self):
         """
@@ -45,8 +46,12 @@ class NaiveBayes:
                                                 self.train_table.iterate_cols(features_only=True)):
             if test_col.type == "Num":
                 #print "Feature before: ", feature,
-                feature = train_col.eid(feature)
-                #print " Discretized feature: ", feature
+                if self.discretization.method == "EID":
+                    feature = train_col.eid(feature)
+                elif self.discretization.method == "EFD":
+                    feature = train_col.efd(feature)
+                #print " Discretized feature: ", feature,
+                #print " Bayes: ", test_col.bayes_evaluate(feature)
             result *= test_col.bayes_evaluate(feature)
         return result
 
@@ -58,6 +63,7 @@ class NaiveBayes:
         # Compute and normalize scores
         scores = [self.evaluate_outcome(row, outcome) for outcome in \
          self.seen_outcomes]
+        #print "Scores: ", scores
         sum_cache = sum(scores) + sys.float_info.epsilon
         scores = map(lambda x: x / sum_cache, scores)
         #print "Ending prediction"

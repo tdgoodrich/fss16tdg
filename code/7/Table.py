@@ -81,21 +81,25 @@ class Num:
         #print "Counts: ", self.counts
 
         if self.discretization is None:
-            "Doing a Gaussian eval"
+            #print "Doing a Gaussian eval"
             s = self.standard_deviation()
             a = 1/math.sqrt(2*math.pi*s**2 + sys.float_info.epsilon)
             b = (raw_x-self.mu)**2/(2*s**2 + sys.float_info.epsilon)
             return a * math.exp(-1*b)
         elif self.discretization.method == "EID":
             #print " - Discretized with EID as ", self.eid(raw_x)
+            #print "EID"
             return float(self.counts.get(self.eid(raw_x), 0)) / self.n
         elif self.discretization.method == "EFD":
             #print " - Discretized with EFD as ", self.eid(raw_x)
+            #print "Evaluating EFD! Counts: " , self.counts
             return float(self.counts.get(self.edf(raw_x), 0)) / self.n
         elif self.discretization.method == "Handled":
             #print " - Discretized with Handled as ", raw_x
+            #print "Handled"
             return float(self.counts.get(raw_x, 0)) / self.n
         else:
+            #print "None"
             return None
 
     def eid(self, feature_value):
@@ -364,7 +368,7 @@ class Table:
         Print the Table's statistics.
         """
         COL_SIZE = 20
-        print "Column Name".ljust(COL_SIZE) + "Statistics"
+    #    print "Column Name".ljust(COL_SIZE) + "Statistics"
         for col in self.cols:
             print col.name.ljust(COL_SIZE) + col.show()
 
@@ -427,6 +431,7 @@ class Table:
         for index in recompute_rows:
             col, values = recompute_rows[index]
             col.recompute_frequency_bins(sorted(values))
+            #print "col: ", col.name, "frequency_bins: " , col.frequency_bins
 
     def recompute_output_rows(self):
         #print "Called recompute_output_rows"
@@ -458,6 +463,8 @@ class Table:
                     if col.type == "Num":
                         new_features.append(col.efd(feature))
                         col.recompute_counts(new_features[-1])
+                    else:
+                        new_features.append(feature)
                 self.output_rows.append(Row(new_features, row.outcomes))
         else:
             self.output_rows = self.rows
