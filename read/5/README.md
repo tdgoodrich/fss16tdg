@@ -6,7 +6,7 @@ Nistor, A., Song, L., Marinov, D., & Lu, S. (2013, May). Toddler: Detecting perf
 
 ### Summary
 
-Give a 3-4 sentence summary of the paper for quick reference.
+The authors provide a functional-bug based framework for studying performance-based bugs.
 
 ### Keywords
 
@@ -32,4 +32,4 @@ Give a 3-4 sentence summary of the paper for quick reference.
 
 * iv1. Ambiguous suggested use of TODDLER. The authors praise their tool for finding performance bugs that other tools could not, but then suggest that their tool is best used to complement existing techniques. I would have found it helpful for the authors to explicitly identify the limitations of TODDLER and when/where alternatives should be used.
 * iv2. Missing future work. While the authors provide nice technical details and experiments, they fail to mention what future work could be made on TODDLER. In some sense this is the same problem as not outlining the faults: they are presenting a shiny new toy with little intuition on its faults and future improvements.
-* iv3. No open source data or code. The authors spend a significant portion of the paper outlining data structure and implementation details, but do not provide a link for their code. 
+* iv3. No open source data or code. The authors spend a significant portion of the paper outlining data structure and implementation details, but do not provide a link for their code.
