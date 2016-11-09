@@ -1,0 +1,283 @@
+% This is "sig-alternate.tex" V2.1 April 2013
+% This file should be compiled with V2.5 of "sig-alternate.cls" May 2012
+%
+% This example file demonstrates the use of the 'sig-alternate.cls'
+% V2.5 LaTeX2e document class file. It is for those submitting
+% articles to ACM Conference Proceedings WHO DO NOT WISH TO
+% STRICTLY ADHERE TO THE SIGS (PUBS-BOARD-ENDORSED) STYLE.
+% The 'sig-alternate.cls' file will produce a similar-looking,
+% albeit, 'tighter' paper resulting in, invariably, fewer pages.
+%
+% ----------------------------------------------------------------------------------------------------------------
+% This .tex file (and associated .cls V2.5) produces:
+%       1) The Permission Statement
+%       2) The Conference (location) Info information
+%       3) The Copyright Line with ACM data
+%       4) NO page numbers
+%
+% as against the acm_proc_article-sp.cls file which
+% DOES NOT produce 1) thru' 3) above.
+%
+% Using 'sig-alternate.cls' you have control, however, from within
+% the source .tex file, over both the CopyrightYear
+% (defaulted to 200X) and the ACM Copyright Data
+% (defaulted to X-XXXXX-XX-X/XX/XX).
+% e.g.
+% \CopyrightYear{2007} will cause 2007 to appear in the copyright line.
+% \crdata{0-12345-67-8/90/12} will cause 0-12345-67-8/90/12 to appear in the copyright line.
+%
+% ---------------------------------------------------------------------------------------------------------------
+% This .tex source is an example which *does* use
+% the .bib file (from which the .bbl file % is produced).
+% REMEMBER HOWEVER: After having produced the .bbl file,
+% and prior to final submission, you *NEED* to 'insert'
+% your .bbl file into your source .tex file so as to provide
+% ONE 'self-contained' source file.
+%
+% ================= IF YOU HAVE QUESTIONS =======================
+% Questions regarding the SIGS styles, SIGS policies and
+% procedures, Conferences etc. should be sent to
+% Adrienne Griscti (griscti@acm.org)
+%
+% Technical questions _only_ to
+% Gerald Murray (murray@hq.acm.org)
+% ===============================================================
+%
+% For tracking purposes - this is V2.0 - May 2012
+
+\documentclass{sig-alternate-05-2015}
+
+
+\begin{document}
+
+% Copyright
+\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+
+% DOI
+%\doi{10.475/123_4}
+
+% ISBN
+%\isbn{123-4567-24-567/08/06}
+
+%Conference
+%\conferenceinfo{PLDI '13}{June 16--19, 2013, Seattle, WA, USA}
+
+%\acmPrice{\$15.00}
+
+%
+% --- Author Metadata here ---
+%\conferenceinfo{WOODSTOCK}{'97 El Paso, Texas USA}
+%\CopyrightYear{2007} % Allows default copyright year (20XX) to be over-ridden - IF NEED BE.
+%\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
+% --- End of Author Metadata ---
+
+\title{Title}
+\subtitle{Subtitle}
+
+% You need the command \numberofauthors to handle the 'placement
+% and alignment' of the authors beneath the title.
+%
+% For aesthetic reasons, we recommend 'three authors at a time'
+% i.e. three 'name/affiliation blocks' be placed beneath the title.
+%
+% NOTE: You are NOT restricted in how many 'rows' of
+% "name/affiliations" may appear. We just ask that you restrict
+% the number of 'columns' to three.
+%
+% Because of the available 'opening page real-estate'
+% we ask you to refrain from putting more than six authors
+% (two rows with three columns) beneath the article title.
+% More than six makes the first-page appear very cluttered indeed.
+%
+% Use the \alignauthor commands to handle the names
+% and affiliations for an 'aesthetic maximum' of six authors.
+% Add names, affiliations, addresses for
+% the seventh etc. author(s) as the argument for the
+% \additionalauthors command.
+% These 'additional authors' will be output/set for you
+% without further effort on your part as the last section in
+% the body of your article BEFORE References or any Appendices.
+
+\numberofauthors{2} %  in this sample file, there are a *total*
+% of EIGHT authors. SIX appear on the 'first-page' (for formatting
+% reasons) and the remaining two appear in the \additionalauthors section.
+%
+\author{
+% You can go ahead and credit any number of authors here,
+% e.g. one 'row of three' or two rows (consisting of one row of three
+% and a second row of one, two or three).
+%
+% The command \alignauthor (no curly braces needed) should
+% precede each author name, affiliation/snail-mail address and
+% e-mail address. Additionally, tag each line of
+% affiliation/address with \affaddr, and tag the
+% e-mail address with \email.
+%
+% 1st. author
+\alignauthor
+Timothy Goodrich\\
+\affaddr{Department of Computer Science}\\
+\affaddr{North Carolina State University}\\
+\affaddr{890 Oval Drive}\\
+\affaddr{Raleigh, North Carolina 27606}\\
+\email{tdgoodri@ncsu.edu}
+% 2nd. author
+\alignauthor
+Tim Menzies\titlenote{Course Advisor}\\
+\affaddr{Department of Computer Science}\\
+\affaddr{North Carolina State University}\\
+\affaddr{890 Oval Drive}\\
+\affaddr{Raleigh, North Carolina 27606}\\
+\email{tjmenzie@ncsu.edu}
+}
+
+\date{7 December 2016}
+% Just remember to make sure that the TOTAL number of authors
+% is the number that will appear on the first page PLUS the
+% number that will appear in the \additionalauthors section.
+
+\maketitle
+\begin{abstract}
+This is my abstract.
+\end{abstract}
+
+%
+% %
+% % The code below should be generated by the tool at
+% % http://dl.acm.org/ccs.cfm
+% % Please copy and paste the code instead of the example below.
+% %
+% \begin{CCSXML}
+% <ccs2012>
+%  <concept>
+%   <concept_id>10010520.10010553.10010562</concept_id>
+%   <concept_desc>Computer systems organization~Embedded systems</concept_desc>
+%   <concept_significance>500</concept_significance>
+%  </concept>
+%  <concept>
+%   <concept_id>10010520.10010575.10010755</concept_id>
+%   <concept_desc>Computer systems organization~Redundancy</concept_desc>
+%   <concept_significance>300</concept_significance>
+%  </concept>
+%  <concept>
+%   <concept_id>10010520.10010553.10010554</concept_id>
+%   <concept_desc>Computer systems organization~Robotics</concept_desc>
+%   <concept_significance>100</concept_significance>
+%  </concept>
+%  <concept>
+%   <concept_id>10003033.10003083.10003095</concept_id>
+%   <concept_desc>Networks~Network reliability</concept_desc>
+%   <concept_significance>100</concept_significance>
+%  </concept>
+% </ccs2012>
+% \end{CCSXML}
+%
+% \ccsdesc[500]{Computer systems organization~Embedded systems}
+% \ccsdesc[300]{Computer systems organization~Redundancy}
+% \ccsdesc{Computer systems organization~Robotics}
+% \ccsdesc[100]{Networks~Network reliability}
+
+
+%
+% End generated code
+%
+
+%
+%  Use this command to print the description
+% %
+% \printccsdesc
+
+% We no longer use \terms command
+%\terms{Theory}
+
+\keywords{Software Product Lines; Adiabatic Quantum Computing; Multi-Objective Optimization}
+
+\section{Introduction}
+\subsection{Motivation}
+What is the business-perspective motivation? Why do we care about optimizing Software Product Lines? Why do we care about using the D-Wave quantum annealer?
+
+\subsection{Contributions}
+\begin{itemize}
+\item \textbf{RQ1 (Conversion Best Practice):} \emph{Which Ising Model formulation algorithm should you use for Softare Product Lines? Compare run time, qubits used, and bipartite proximity.}
+\item \textbf{RQ2 (Performance):} \emph{How does D-Wave annealer performance compare to SAT4j? Compare run time and number of optimal solutions found.}
+\item \textbf{RQ3 (Scalability):} \emph{How does performance of large optimization problems compare to those small enough to fit on the D-Wave annealer? Compare run time and number of optimal solutions found.}
+\end{itemize}
+
+\section{Background}
+Introduce the following: Software Product Lines, the specific input corpus we use in this paper (SPLOT for RQ1 and RQ2, LVAT for RQ3), Constrained Satisfiability Problem, Conjunctive Normal Form, SAT4j, the D-Wave annealer, the Ising Model problem.
+
+\section{RQ1: Conversion Best Practice}
+In this section we convert our SPLOT problems into Ising Models using the following algorithms:
+\begin{enumerate}
+\item $\textsc{CSP} \to \textsc{CNF} \to \textsc{IsingModel}$ using boolean logic gadgets.
+\item $\textsc{CSP} \to \textsc{MaxIndSet} \to \textsc{IsingModel}$ using a conflict graph.
+\item $\textsc{CSP} \to \textsc{IsingModel}$ using a penalty function computed with an LP-solver.
+\end{enumerate}
+
+\subsection{Ising Model Formulation Algorithms}
+Define each algorithm in detail, provide hooks to the source code.
+
+\subsection{Experimental Results}
+Compare the three algorithms on the SPLOT corpus, using the following three objectives: total conversion run time, size of the constructed Ising Model, and how easily we expect this model is to embed into the D-Wave Chimera hardware (e.g. use Odd Cycle Transversal to measure its ``bipartiteness''). Provide plots and a ranking by Scott-Knot.
+
+\subsection{Discussion}
+Answer RQ1 by providing the best practice. Provide the following open problems: alternative formulation algorithms we could try (if any exist), different preprocessing techniques we could try (clustering, etc.), and directions for future algorithm design.
+
+
+\section{RQ2: Empirical Performance}
+In this section we embed our SPLOT Ising Models into the physical hardware, run, and compare the run times and solutions found to SAT4j.
+
+\subsection{D-Wave Hardware Details}
+Detail how we're embedding the Ising Models (with the API algorithm), what parameters are available and our choice of them, and whether we're using the virtual full-yield Chimera graph or not. Provide a hook to my code's config file, including seeds used, etc.
+
+\subsection{Experimental Results}
+Compare the three algorithms and SAT4j on run time, run time with ``compilation time'' (going from the raw CSP to the solution), and the number of valid distinct solutions found. If the data lends itself, maybe provide a solutions-found-per-time-spent curve for each algorithm. Provide plots and a Scott-Knot ranking.
+
+\subsection{Discussion}
+Provide conclusions for RQ2: Is D-Wave current competitive as a drop-in replacement for a SAT-solver? Detail the following open problems: parameter optimization with meta-heuristics, and the use of different embedding algorithms.
+
+
+\section{RQ3: Scalability}
+In this section we use an input corpus of much larger SPL datasets, and use 1-2 algorithms to break the problem into pieces. We want to see how the results from the previous sections scale to problems too big for the hardware.
+
+\subsection{Decomposition Algorithms}
+Detail one or both of D-Wave's recent divide-and-conquer algorithm and belief propagation algorithm.
+
+\subsection{Experimental Results}
+Compare the [three conversion algorithms] $\times$ [the 1-2 decomposition algorithms] with SAT4j. See how the previous run time and solutions-found relations change. Provide plots and a Scott-Knot ranking.
+
+\subsection{Discussion}
+Provide a conclusion for RQ3: Does it make sense to use the D-Wave hardware for ``sufficiently large'' SPL problems? Discuss the open problem of ``approximating'' the original CSP by removing choice cross-tree constraints.
+
+
+\section{Conclusion}
+
+\subsection{Summary of Results}
+Summarize the answers to the research questions detailed in the ``Discussion'' subsections at the end of the middle three sections.
+
+\subsection{Validity of Software Science}
+Why is this software science and not merely data dabbling?
+\begin{itemize}
+\item We asked and addressed concrete questions: We identify a best practice for converting SPL datasets into a D-Wave compatible format (RQ1), we see if D-Wave is currently a viable alternative to a SAT solver (RQ2), and see if D-Wave is worth using for large datasets (RQ3).
+\item We used publicly-available and previously cited datasets.
+\item We provide the output data from the D-Wave annealer (if we can, check with D-Wave).
+\item We provide the scripts, configuration files, algorithm implementations for all experiments, along with a tutorial in the github repo on how to use these tools.
+\item We provide conclusions that are based on tried-and-true statistical tests (Scott-Knot).
+\end{itemize}
+
+
+
+\section{Acknowledgments}
+To come.
+
+%\bibliographystyle{abbrv}
+%\bibliography{bib}  % sigproc.bib is the name of the Bibliography in this case
+
+\end{document}
