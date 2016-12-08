@@ -1,0 +1,7 @@
+/Code/*.xml
+/Code/*.cnf
+/Code/*.posiform
+/Code/*.sat
+/Code/*.2posiform
+/Code/*.qubo
+/Code/*.cnf_names
