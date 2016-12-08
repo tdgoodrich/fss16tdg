@@ -1,0 +1,21 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Motivation}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Contributions}{section.1}% 3
+\BOOKMARK [1][-]{section.2}{Background}{}% 4
+\BOOKMARK [2][-]{subsection.2.1}{Related Work}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.2}{D-Wave Quantum Annealing}{section.2}% 6
+\BOOKMARK [1][-]{section.3}{RQ1: Available Methods}{}% 7
+\BOOKMARK [2][-]{subsection.3.1}{Method 1: Maximum Independent Set}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.2}{Method 2: MAX-2-SAT Posiforms}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.3}{Summary}{section.3}% 10
+\BOOKMARK [1][-]{section.4}{RQ2: Method Practicality}{}% 11
+\BOOKMARK [2][-]{subsection.4.1}{Data}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.2}{Algorithm Implementation}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.3}{Experimental Results}{section.4}% 14
+\BOOKMARK [2][-]{subsection.4.4}{Expected Practicality}{section.4}% 15
+\BOOKMARK [1][-]{section.5}{Conclusion}{}% 16
+\BOOKMARK [2][-]{subsection.5.1}{Summary of Results}{section.5}% 17
+\BOOKMARK [2][-]{subsection.5.2}{Future Work}{section.5}% 18
+\BOOKMARK [2][-]{subsection.5.3}{Data Science vs. Data Dabbling}{section.5}% 19
+\BOOKMARK [1][-]{section.6}{Acknowledgments}{}% 20
+\BOOKMARK [1][-]{section.7}{References}{}% 21
